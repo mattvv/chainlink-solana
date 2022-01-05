@@ -85,7 +85,6 @@ func MakeConfigSetMapping(
 				"min_answer":                  state.Config.MinAnswer.BigInt().Bytes(),
 				"max_answer":                  state.Config.MaxAnswer.BigInt().Bytes(),
 				"description":                 state.Config.Description[:],
-				"decimals":                    int32(state.Config.Decimals),
 				"f":                           int32(state.Config.F),
 				"round":                       int32(state.Config.Round),
 				"epoch":                       int64(state.Config.Epoch),
