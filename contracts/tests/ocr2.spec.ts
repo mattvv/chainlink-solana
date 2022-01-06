@@ -27,6 +27,8 @@ let ethereumAddress = (publicKey: Buffer) => {
 
 const Scope = {
   Version: { version: {} },
+  Decimals: { decimals: {} },
+  Description: { description: {} },
   // RoundData: { roundData: { roundId } },
   LatestRoundData: { latestRoundData: {} },
   Aggregator: { aggregator: {} },
@@ -537,9 +539,30 @@ describe('ocr2', async () => {
         signers: [buffer]
       }
     );
-
-    // let account = await program.account.latestConfig.fetch(buffer.publicKey);
     let account = await workspace.Store.account.version.fetch(buffer.publicKey);
     console.log(account);
+
+    buffer = Keypair.generate();
+    await workspace.Store.rpc.query(
+      Scope.Description,
+      {
+        accounts: {
+          feed: transmissions.publicKey,
+          buffer: buffer.publicKey,
+        },
+        preInstructions: [
+          SystemProgram.createAccount({
+            fromPubkey: provider.wallet.publicKey,
+            newAccountPubkey: buffer.publicKey,
+            lamports: await provider.connection.getMinimumBalanceForRentExemption(256),
+            space: 256,
+            programId: workspace.Store.programId,
+          })
+        ],
+        signers: [buffer]
+      }
+    );
+    account = await workspace.Store.account.description.fetch(buffer.publicKey);
+    assert.ok(account.description == 'ETH/BTC');
   });
 });
